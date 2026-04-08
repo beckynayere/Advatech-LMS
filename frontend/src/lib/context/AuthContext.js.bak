@@ -1,3 +1,4 @@
+// DESTINATION: src/lib/context/AuthContext.js
 'use client'
 
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
@@ -7,7 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:12345'
 
 const AuthContext = createContext(null)
 
-// ─── JWT decode ────────────────────────────────────────────────────
+// ─── JWT decode (no library needed — just base64 payload) ────────────────────
 function decodeJwt(token) {
   try {
     const payload = token.split('.')[1]
@@ -18,12 +19,15 @@ function decodeJwt(token) {
   }
 }
 
+// Returns ms until expiry, negative if already expired
 function msUntilExpiry(token) {
   const decoded = decodeJwt(token)
   if (!decoded?.exp) return -1
   return decoded.exp * 1000 - Date.now()
 }
 
+// ─── Fetch fresh user from /me ─────────────────────────────────────────────────
+// Re-syncs role/institutionId from the server after a refresh
 async function fetchFreshUser(accessToken) {
   try {
     const res = await fetch(`${API_URL}/api/v1/auth/me`, {
@@ -37,7 +41,9 @@ async function fetchFreshUser(accessToken) {
   }
 }
 
-async function attemptRefresh(refreshToken) {
+// ─── Silent refresh ────────────────────────────────────────────────────────────
+async function attemptRefresh() {
+  const refreshToken = sessionStorage.getItem('lms_refresh_token')
   if (!refreshToken) return null
 
   try {
@@ -52,6 +58,7 @@ async function attemptRefresh(refreshToken) {
     const { accessToken, refreshToken: newRefresh } = data
     if (!accessToken) return null
 
+    sessionStorage.setItem('lms_token', accessToken)
     if (newRefresh) sessionStorage.setItem('lms_refresh_token', newRefresh)
     return accessToken
   } catch {
@@ -59,6 +66,7 @@ async function attemptRefresh(refreshToken) {
   }
 }
 
+// ─── Provider ─────────────────────────────────────────────────────────────────
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
@@ -66,18 +74,17 @@ export function AuthProvider({ children }) {
   const router = useRouter()
   const refreshTimerRef = useRef(null)
 
+  // Schedule a proactive token refresh 2 min before expiry
   const scheduleRefresh = useCallback((accessToken) => {
     if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current)
 
     const msLeft = msUntilExpiry(accessToken)
-    // Refresh 5 minutes before expiry, or every 30 minutes if no expiry
-    const delay = msLeft > 0 ? Math.max(msLeft - 5 * 60 * 1000, 60000) : 30 * 60 * 1000
+    const delay = Math.max(msLeft - 2 * 60 * 1000, 100)
 
     refreshTimerRef.current = setTimeout(async () => {
-      const refreshToken = sessionStorage.getItem('lms_refresh_token')
-      const newToken = await attemptRefresh(refreshToken)
+      const newToken = await attemptRefresh()
       if (newToken) {
-        sessionStorage.setItem('lms_token', newToken)
+        // FIX: Re-fetch user from /me after token refresh to pick up role/institutionId changes
         const freshUser = await fetchFreshUser(newToken)
         if (freshUser) {
           sessionStorage.setItem('lms_user', JSON.stringify(freshUser))
@@ -85,64 +92,59 @@ export function AuthProvider({ children }) {
         }
         setToken(newToken)
         scheduleRefresh(newToken)
+      } else {
+        // Refresh failed — session truly expired
+        logout()
       }
     }, delay)
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Boot: restore session ──────────────────────────────────────────────────
+  // ── Boot: restore session, validate token ──────────────────────────────────
   useEffect(() => {
     async function boot() {
       try {
         const savedUser = sessionStorage.getItem('lms_user')
         const savedToken = sessionStorage.getItem('lms_token')
-        const savedRefreshToken = sessionStorage.getItem('lms_refresh_token')
 
-        if (!savedToken) {
+        if (!savedUser || !savedToken) {
           setLoading(false)
           return
         }
 
-        // Check if token is still valid
         const remaining = msUntilExpiry(savedToken)
-        
-        if (remaining > 0) {
-          // Token still valid
-          if (savedUser) {
-            setUser(JSON.parse(savedUser))
-          } else {
-            const freshUser = await fetchFreshUser(savedToken)
-            if (freshUser) {
-              sessionStorage.setItem('lms_user', JSON.stringify(freshUser))
-              setUser(freshUser)
-            }
-          }
+
+        if (remaining > 5 * 60 * 1000) {
+          // Token is fine — re-fetch user to catch any server-side role changes
+          setUser(JSON.parse(savedUser))
           setToken(savedToken)
           scheduleRefresh(savedToken)
-        } else if (savedRefreshToken) {
-          // Token expired, try to refresh
-          const newToken = await attemptRefresh(savedRefreshToken)
-          if (newToken) {
-            sessionStorage.setItem('lms_token', newToken)
-            const freshUser = await fetchFreshUser(newToken)
+          // Async re-sync user in background (non-blocking)
+          fetchFreshUser(savedToken).then(freshUser => {
             if (freshUser) {
               sessionStorage.setItem('lms_user', JSON.stringify(freshUser))
               setUser(freshUser)
             }
+          })
+        } else {
+          // Token is expired or within 5 min of expiry — refresh immediately
+          const newToken = await attemptRefresh()
+          if (newToken) {
+            // FIX: Re-fetch user from /me to get latest role/institutionId
+            const freshUser = await fetchFreshUser(newToken)
+            const userToStore = freshUser || JSON.parse(savedUser)
+            sessionStorage.setItem('lms_user', JSON.stringify(userToStore))
+            sessionStorage.setItem('lms_token', newToken)
+            setUser(userToStore)
             setToken(newToken)
             scheduleRefresh(newToken)
           } else {
-            // Refresh failed, clear session
+            // Can't refresh — clear everything
             sessionStorage.removeItem('lms_token')
             sessionStorage.removeItem('lms_refresh_token')
             sessionStorage.removeItem('lms_user')
           }
-        } else {
-          // No refresh token, clear everything
-          sessionStorage.removeItem('lms_token')
-          sessionStorage.removeItem('lms_user')
         }
-      } catch (error) {
-        console.error('Boot error:', error)
+      } catch {
         sessionStorage.removeItem('lms_token')
         sessionStorage.removeItem('lms_refresh_token')
         sessionStorage.removeItem('lms_user')
@@ -152,77 +154,52 @@ export function AuthProvider({ children }) {
     }
 
     boot()
+
     return () => {
       if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current)
     }
   }, [scheduleRefresh])
 
-  // ─── Login ──────────────────────────────────────────────────────────────────
+  // ── Login ──────────────────────────────────────────────────────────────────
   const login = async (email, password) => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+    const res = await fetch(`${API_URL}/api/v1/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-      const data = await res.json()
-      if (!res.ok) {
-        throw new Error(data?.message || data?.error?.message || 'Login failed')
-      }
+    const data = await res.json()
+    if (!res.ok) throw new Error(data?.message || data?.error?.message || 'Login failed')
 
-      const { user: backendUser, accessToken, refreshToken } = data
+    const { user: backendUser, accessToken, refreshToken } = data
 
-      // Store in sessionStorage
-      sessionStorage.setItem('lms_user', JSON.stringify(backendUser))
-      sessionStorage.setItem('lms_token', accessToken)
-      if (refreshToken) sessionStorage.setItem('lms_refresh_token', refreshToken)
+    sessionStorage.setItem('lms_user', JSON.stringify(backendUser))
+    sessionStorage.setItem('lms_token', accessToken)
+    if (refreshToken) sessionStorage.setItem('lms_refresh_token', refreshToken)
 
-      setUser(backendUser)
-      setToken(accessToken)
-      scheduleRefresh(accessToken)
+    setUser(backendUser)
+    setToken(accessToken)
+    scheduleRefresh(accessToken)
 
-      // Redirect based on role
-      const role = backendUser.role || backendUser.roleName
-      if (role === 'PLATFORM_ADMIN') {
-        router.push('/admin/dashboard')
-      } else if (role === 'ADMIN') {
-        router.push('/institution/dashboard')
-      } else if (role === 'TEACHER') {
-        router.push('/lecturer/dashboard')
-      } else {
-        router.push('/dashboard')
-      }
-// Redirect based on role
-    
-      return backendUser
-    } catch (error) {
-      console.error('Login error:', error)
-      throw error
-    }
+    return backendUser
   }
 
-  // ─── Logout ─────────────────────────────────────────────────────────────────
+  // ── Logout ─────────────────────────────────────────────────────────────────
   const logout = useCallback(async () => {
     if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current)
 
     const refreshToken = sessionStorage.getItem('lms_refresh_token')
     const accessToken = sessionStorage.getItem('lms_token')
 
-    // Try to logout on server (ignore errors)
     if (refreshToken && accessToken) {
-      try {
-        await fetch(`${API_URL}/api/v1/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + accessToken,
-          },
-          body: JSON.stringify({ refreshToken }),
-        })
-      } catch (e) {
-        // Ignore logout errors
-      }
+      fetch(`${API_URL}/api/v1/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify({ refreshToken }),
+      }).catch(() => {})
     }
 
     sessionStorage.removeItem('lms_token')
@@ -236,6 +213,7 @@ export function AuthProvider({ children }) {
   }, [router])
 
   return (
+    // FIX: expose setUser so profile page (and other consumers) can update user state
     <AuthContext.Provider value={{ user, setUser, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>

@@ -63,7 +63,7 @@ const initiateSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
-// FIX TS: `return res.json(...)` inside asyncHandler → res.json(); return;
+// FIX TS: `res.json(...)` inside asyncHandler → res.json(); return;
 // FIX TS2322: metadata is Json — cast Record<string,unknown> to Prisma.InputJsonValue
 router.post("/initiate", anyRole, asyncHandler(async (req: Request, res: Response) => {
   const r             = req as RequestWithAuth;
@@ -107,7 +107,7 @@ router.post("/initiate", anyRole, asyncHandler(async (req: Request, res: Respons
       const stkData = await stkRes.json() as any;
       if (stkData.ResponseCode === "0") {
         await prisma.paymentTransaction.update({ where: { id: tx.id }, data: { externalId: stkData.CheckoutRequestID } });
-        // FIX TS: was `return res.json(...)` — split to res.json(); return;
+        // FIX TS: was `res.json(...)` — split to res.json(); return;
         res.status(201).json({
           success: true,
           transaction: { ...tx, externalId: stkData.CheckoutRequestID },
@@ -153,7 +153,7 @@ router.get("/:id", anyRole, asyncHandler(async (req: Request, res: Response) => 
 }));
 
 // ── POST /callback/mpesa ───────────────────────────────────────────────────────
-// FIX TS: `return res.json(...)` → res.json(); return;
+// FIX TS: `res.json(...)` → res.json(); return;
 router.post("/callback/mpesa", asyncHandler(async (req: Request, res: Response) => {
   if (!isAllowedSafaricomIp(req)) {
     logger.warn({ ip: req.ip, path: req.path }, "M-Pesa callback rejected: IP not in Safaricom allowlist");

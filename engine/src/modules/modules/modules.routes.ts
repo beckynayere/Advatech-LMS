@@ -41,7 +41,7 @@ router.get("/", anyRole, asyncHandler(async (req: Request, res: Response) => {
   const cacheKey = `modules:${courseId}:student`;
   if (!isStaff) {
     const cached = moduleCache.get(cacheKey);
-    if (cached) return res.json({ success: true, data: cached, cached: true });
+    if (cached) res.json({ success: true, data: cached, cached: true });
   }
 
   const where: any = { courseId, institutionId };
@@ -99,7 +99,7 @@ router.get("/", anyRole, asyncHandler(async (req: Request, res: Response) => {
     }));
     // FIX 8: cache student view for 60 seconds
     moduleCache.set(cacheKey, withProgress, 60);
-    return res.json({ success: true, data: withProgress });
+    res.json({ success: true, data: withProgress });
   }
 
   res.json({ success: true, data: enrichedModules });

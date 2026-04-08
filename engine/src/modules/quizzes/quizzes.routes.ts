@@ -215,7 +215,7 @@ async function startAttempt(req: Request, res: Response) {
       ...q,
       options: q.options.map(({ isCorrect: _ic, ...o }) => o),
     }));
-    return res.json({ success: true, attempt: existing, questions: sanitized, resumed: true });
+    res.json({ success: true, attempt: existing, questions: sanitized, resumed: true });
   }
 
   const endsAt = quiz.timeLimitMins

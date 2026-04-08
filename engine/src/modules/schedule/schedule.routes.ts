@@ -166,7 +166,7 @@ router.patch("/online-classes/:id", lecturerOrAdmin, asyncHandler(async (req: Re
   res.json({ success: true, data: updated });
 }));
 
-// FIX TS2345: `return res.json(...)` → res.json(); return;  — asyncHandler expects Promise<void>
+// FIX TS2345: `res.json(...)` → res.json(); return;  — asyncHandler expects Promise<void>
 router.post("/online-classes/:id/start", lecturerOrAdmin, asyncHandler(async (req: Request, res: Response) => {
   const id            = Number(req.params.id);
   const institutionId = getInstId(req);

@@ -1,0 +1,116 @@
+.page { display: flex; flex-direction: column; gap: 24px; }
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.summaryCard {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.summaryValue {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.summaryLabel { font-size: 12px; color: var(--text-muted); }
+
+.gradeCard {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.gradeCardHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.courseTitle { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.courseLecturer { font-size: 12px; color: var(--text-muted); }
+
+.gradeRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.letterGrade {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.A { background: var(--success-bg); color: var(--success); }
+.B { background: var(--primary-light); color: var(--primary); }
+.C { background: #eff6ff; color: #2563eb; }
+.D { background: var(--warning-bg); color: var(--warning); }
+.F { background: var(--danger-bg); color: var(--danger); }
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.breakdownRow:last-child { border-bottom: none; }
+
+.breakdownTitle { flex: 1; font-size: 13px; color: var(--text-secondary); }
+
+.breakdownScore {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 60px;
+  text-align: right;
+}
+
+.miniBar {
+  width: 80px;
+  height: 4px;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.miniFill { height: 100%; background: var(--primary); border-radius: var(--radius-full); }
+
+.breakdownFeedback {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 2px;
+}

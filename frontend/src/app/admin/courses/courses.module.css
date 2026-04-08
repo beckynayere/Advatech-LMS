@@ -1,0 +1,322 @@
+/* DESTINATION: src/app/admin/courses/courses.module.css */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 340px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 12px 0 36px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  transition: border-color var(--transition);
+  font-family: inherit;
+}
+.searchInput:focus { border-color: var(--primary); }
+
+.addBtn {
+  height: 40px;
+  padding: 0 18px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background var(--transition);
+  white-space: nowrap;
+  font-family: inherit;
+  margin-left: auto;
+}
+.addBtn:hover { background: var(--primary-dark); }
+
+.meta {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.meta span { font-weight: 600; color: var(--text-primary); }
+
+/* ---- TABLE ---- */
+.tableWrap {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.table th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 11px 16px;
+  text-align: left;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 13px 16px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: var(--gray-50); }
+
+/* ---- CELLS ---- */
+.courseCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colorBar {
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.courseName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.courseDept {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.codeTag {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.lecturerName {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.unassigned {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.credits {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.enrolledCell {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---- ACTIONS ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.actionBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.actionBtn:hover { background: var(--gray-100); color: var(--text-primary); }
+
+/* ---- DRAWER FORM ---- */
+.drawerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.input {
+  height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  transition: border-color var(--transition);
+  font-family: inherit;
+  width: 100%;
+}
+.input:focus { border-color: var(--primary); }
+
+select.input { cursor: pointer; }
+
+.textarea {
+  height: auto;
+  min-height: 80px;
+  padding: 10px 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.colorPicker {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.colorDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.15s;
+}
+.colorDotActive { outline-color: var(--text-primary); }
+
+.currentLecturer {
+  padding: 10px 14px;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.drawerActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+
+.cancelBtn {
+  height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.cancelBtn:hover:not(:disabled) { border-color: var(--text-muted); color: var(--text-primary); }
+
+.saveBtn {
+  height: 40px;
+  padding: 0 24px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition);
+  margin-left: auto;
+}
+.saveBtn:hover:not(:disabled) { background: var(--primary-dark); }
+.saveBtn:disabled, .cancelBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .addBtn  { margin-left: 0; justify-content: center; }
+  .searchWrap { max-width: 100%; }
+  .formGrid { grid-template-columns: 1fr; }
+}

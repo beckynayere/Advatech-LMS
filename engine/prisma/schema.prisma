@@ -1,0 +1,994 @@
+// ============================================================
+//  AdvaTech LMS — Custom Academic Engine
+//  Prisma Schema  (PostgreSQL)
+//  Production-ready: multi-tenant unique constraints, indexes,
+//  soft-delete consistency, token type field
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  MULTI-TENANCY
+// ─────────────────────────────────────────────────────────────
+
+model Institution {
+  id           Int      @id @default(autoincrement())
+  name         String
+  slug         String   @unique
+  domain       String?  @unique
+  logoUrl      String?  @map("logo_url")
+  primaryColor String?  @map("primary_color")
+  smtpConfig   Json?    @map("smtp_config")
+  isActive     Boolean  @default(true)  @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt      @map("updated_at")
+
+  users               User[]
+  userRoles           UserRole[]
+  schools             School[]
+  departments         Department[]
+  cohorts             Cohort[]
+  courses             Course[]
+  courseLecturers     CourseLecturer[]
+  courseMaterials     CourseMaterial[]
+  assignments         Assignment[]
+  submissions         Submission[]
+  quizzes             Quiz[]
+  quizAttempts        QuizAttempt[]
+  exams               Exam[]
+  grades              Grade[]
+  timetableSlots      TimetableSlot[]
+  onlineClassSessions OnlineClassSession[]
+  attendanceRecords   AttendanceRecord[]
+  paymentTransactions PaymentTransaction[]
+  notifications       Notification[]
+  announcements       Announcement[]
+  auditLogs           AuditLog[]
+  documents           Document[]
+  courseModules   CourseModule[]
+  moduleItems     ModuleItem[]
+  studentProgress StudentProgress[]
+
+  @@map("institutions")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  AUTH & USERS
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String
+  avatarUrl     String?   @map("avatar_url")
+  phone         String?
+  institutionId Int?      @map("institution_id")
+  isActive      Boolean   @default(true)  @map("is_active")
+  emailVerified Boolean   @default(false) @map("email_verified")
+  lastLoginAt   DateTime?               @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt      @map("updated_at")
+
+  institution          Institution?         @relation(fields: [institutionId], references: [id])
+  userRoles            UserRole[]
+  lecturerProfile      LecturerProfile?
+  studentProfile       StudentProfile?
+  refreshTokens        RefreshToken[]
+  passwordResets       PasswordReset[]
+  createdCourses       Course[]             @relation("CourseCreator")
+  courseMaterials      CourseMaterial[]     @relation("MaterialCreator")
+  createdAssignments   Assignment[]         @relation("AssignmentCreator")
+  submissions          Submission[]
+  gradedGrades         Grade[]              @relation("GradeGrader")
+  grades               Grade[]
+  quizAttempts         QuizAttempt[]
+  createdExams         Exam[]               @relation("ExamCreator")
+  timetableSlotsAsLect TimetableSlot[]      @relation("TimetableLecturer")
+  onlineClassSessions  OnlineClassSession[]
+  attendanceRecords    AttendanceRecord[]
+  paymentTransactions  PaymentTransaction[]
+  notifications        Notification[]
+  auditLogs            AuditLog[]           @relation("AuditActor")
+  documents            Document[]           @relation("DocumentUploader")
+  createdCohorts       Cohort[]             @relation("CohortCreator")
+  cohortEnrollments    CohortEnrollment[]
+  schoolAssignments    SchoolAssignment[]
+  headDepartments      Department[]         @relation("DepartmentHead")
+  deanSchools          School[]             @relation("SchoolDean")
+  materialAccessLogs   MaterialAccessLog[]  @relation("MaterialAccessUser")
+  createdModules  CourseModule[]  @relation("ModuleCreator")
+  progress        StudentProgress[]
+
+  @@index([institutionId])
+  @@map("users")
+}
+
+model Role {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  userRoles UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  userId        Int  @map("user_id")
+  roleId        Int  @map("role_id")
+  institutionId Int? @map("institution_id")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        Role         @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [id])
+
+  @@id([userId, roleId])
+  @@index([institutionId])
+  @@map("user_roles")
+}
+
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt]) // for cleanup queries (ENG-L06)
+  @@map("refresh_tokens")
+}
+
+// FIX SEC-05: Added `type` field to distinguish email_verification vs password_reset tokens
+model PasswordReset {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  // "password_reset" | "email_verification"
+  type      String    @default("password_reset")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_resets")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  INSTITUTION STRUCTURE
+// ─────────────────────────────────────────────────────────────
+
+model School {
+  id            Int      @id @default(autoincrement())
+  name          String
+  // FIX ENG-L01: scoped unique per institution, not global
+  code          String
+  description   String?
+  type          String   @default("school")
+  deanId        Int?     @map("dean_id")
+  institutionId Int      @map("institution_id")
+  isActive      Boolean  @default(true)  @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution       Institution        @relation(fields: [institutionId], references: [id])
+  dean              User?              @relation("SchoolDean", fields: [deanId], references: [id])
+  departments       Department[]
+  courses           Course[]
+  assignments       Assignment[]       @relation("SchoolAssignmentScope")
+  materials         CourseMaterial[]
+  schoolAssignments SchoolAssignment[]
+
+  @@unique([code, institutionId]) // FIX ENG-L01
+  @@index([institutionId])
+  @@map("schools")
+}
+
+model Department {
+  id            Int      @id @default(autoincrement())
+  name          String
+  // FIX ENG-L01: scoped unique per institution, not global
+  code          String
+  description   String?
+  headId        Int?     @map("head_id")
+  schoolId      Int      @map("school_id")
+  institutionId Int      @map("institution_id")
+  isActive      Boolean  @default(true)  @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution       Institution        @relation(fields: [institutionId], references: [id])
+  school            School             @relation(fields: [schoolId], references: [id])
+  head              User?              @relation("DepartmentHead", fields: [headId], references: [id])
+  courses           Course[]
+  materials         CourseMaterial[]
+  schoolAssignments SchoolAssignment[]
+
+  @@unique([code, institutionId]) // FIX ENG-L01
+  @@index([institutionId])
+  @@index([schoolId])
+  @@map("departments")
+}
+
+model SchoolAssignment {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  schoolId      Int      @map("school_id")
+  departmentId  Int?     @map("department_id")
+  role          String   @default("lecturer")
+  institutionId Int      @map("institution_id")
+  assignedAt    DateTime @default(now()) @map("assigned_at")
+  isActive      Boolean  @default(true)  @map("is_active")
+
+  user       User        @relation(fields: [userId], references: [id])
+  school     School      @relation(fields: [schoolId], references: [id])
+  department Department? @relation(fields: [departmentId], references: [id])
+
+  @@unique([userId, schoolId, departmentId])
+  @@index([institutionId])
+  @@map("school_assignments")
+}
+
+model LecturerProfile {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique @map("user_id")
+  employeeId     String?  @map("employee_id")
+  specialization String?
+  department     String?
+  institutionId  Int      @map("institution_id")
+  isActive       Boolean  @default(true)  @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt      @map("updated_at")
+
+  user               User             @relation(fields: [userId], references: [id])
+  courses            CourseLecturer[]
+  coordinatedCohorts Cohort[]         @relation("CohortCoordinator")
+
+  @@index([institutionId])
+  @@map("lecturer_profiles")
+}
+
+model StudentProfile {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique @map("user_id")
+  registrationNo String?  @unique @map("registration_no")
+  yearOfStudy    Int?     @map("year_of_study")
+  admissionYear  Int?     @map("admission_year")
+  institutionId  Int      @map("institution_id")
+  isActive       Boolean  @default(true)  @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt      @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([institutionId])
+  @@map("student_profiles")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  COHORTS & ENROLLMENT
+// ─────────────────────────────────────────────────────────────
+
+model Cohort {
+  id            Int      @id @default(autoincrement())
+  name          String
+  // FIX ENG-L01: scoped unique per institution
+  code          String
+  description   String?
+  academicYear  String   @map("academic_year")
+  semester      String
+  maxStudents   Int      @default(50)    @map("max_students")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  isActive      Boolean  @default(true)  @map("is_active")
+  coordinatorId Int      @map("coordinator_id")
+  institutionId Int      @map("institution_id")
+  createdBy     Int      @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution Institution        @relation(fields: [institutionId], references: [id])
+  coordinator LecturerProfile    @relation("CohortCoordinator", fields: [coordinatorId], references: [id])
+  creator     User               @relation("CohortCreator", fields: [createdBy], references: [id])
+  courses     CohortCourse[]
+  enrollments CohortEnrollment[]
+  exams       ExamCohort[]
+
+  @@unique([code, institutionId]) // FIX ENG-L01
+  @@index([institutionId])
+  @@map("cohorts")
+}
+
+model CohortCourse {
+  id            Int      @id @default(autoincrement())
+  cohortId      Int      @map("cohort_id")
+  courseId      Int      @map("course_id")
+  institutionId Int      @map("institution_id")
+  addedAt       DateTime @default(now()) @map("added_at")
+
+  cohort Cohort @relation(fields: [cohortId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([cohortId, courseId])
+  @@index([cohortId]) // FIX MISC-07
+  @@map("cohort_courses")
+}
+
+model CohortEnrollment {
+  id            Int      @id @default(autoincrement())
+  cohortId      Int      @map("cohort_id")
+  studentId     Int      @map("student_id")
+  institutionId Int      @map("institution_id")
+  enrolledAt    DateTime @default(now()) @map("enrolled_at")
+  isActive      Boolean  @default(true)  @map("is_active")
+
+  cohort  Cohort @relation(fields: [cohortId], references: [id])
+  student User   @relation(fields: [studentId], references: [id])
+
+  @@unique([cohortId, studentId])
+  @@index([cohortId])    // FIX MISC-07
+  @@index([studentId])
+  @@index([institutionId])
+  @@map("cohort_enrollments")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  COURSES & CONTENT
+// ─────────────────────────────────────────────────────────────
+
+model Course {
+  id            Int      @id @default(autoincrement())
+  name          String
+  // FIX ENG-L01: scoped unique per institution
+  code          String
+  description   String?
+  credits       Int      @default(3)
+  semester      String?
+  academicYear  String?  @map("academic_year")
+  maxStudents   Int      @default(50) @map("max_students")
+  isActive      Boolean  @default(true)  @map("is_active")
+  schoolId      Int?     @map("school_id")
+  departmentId  Int?     @map("department_id")
+  institutionId Int      @map("institution_id")
+  createdBy     Int      @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution         Institution          @relation(fields: [institutionId], references: [id])
+  school              School?              @relation(fields: [schoolId], references: [id])
+  department          Department?          @relation(fields: [departmentId], references: [id])
+  creator             User                 @relation("CourseCreator", fields: [createdBy], references: [id])
+  lecturers           CourseLecturer[]
+  materials           CourseMaterial[]
+  cohorts             CohortCourse[]
+  assignments         Assignment[]
+  quizzes             Quiz[]
+  exams               Exam[]
+  timetable           TimetableSlot[]
+  onlineClassSessions OnlineClassSession[]
+  documents           Document[]           @relation("CourseDocuments")
+  modules   CourseModule[]
+
+  @@unique([code, institutionId]) // FIX ENG-L01
+  @@index([institutionId])
+  @@index([schoolId])
+  @@index([departmentId])
+  @@map("courses")
+}
+
+model CourseModule {
+  id            Int      @id @default(autoincrement())
+  courseId      Int      @map("course_id")
+  institutionId Int      @map("institution_id")
+  title         String
+  description   String?
+  sortOrder     Int      @default(0) @map("sort_order")
+  isPublished   Boolean  @default(false) @map("is_published")
+  createdBy     Int      @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  institution Institution   @relation(fields: [institutionId], references: [id])
+  creator     User          @relation("ModuleCreator", fields: [createdBy], references: [id])
+  items       ModuleItem[]
+
+  @@index([courseId])
+  @@index([institutionId])
+  @@map("course_modules")
+}
+
+model ModuleItem {
+  id            Int       @id @default(autoincrement())
+  moduleId      Int       @map("module_id")
+  institutionId Int       @map("institution_id")
+  type          String    // 'material' | 'assignment' | 'quiz'
+  refId         Int       @map("ref_id")
+  title         String?   // optional override
+  sortOrder     Int       @default(0) @map("sort_order")
+  isLocked      Boolean   @default(false) @map("is_locked")
+  unlockDate    DateTime? @map("unlock_date")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  module      CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  institution Institution   @relation(fields: [institutionId], references: [id])
+
+  @@index([moduleId])
+  @@map("module_items")
+}
+
+model StudentProgress {
+  id            Int       @id @default(autoincrement())
+  studentId     Int       @map("student_id")
+  courseId      Int       @map("course_id")
+  itemType      String    @map("item_type") // 'material' | 'assignment' | 'quiz'
+  itemId        Int       @map("item_id")
+  status        String    @default("viewed") // 'viewed' | 'completed'
+  viewedAt      DateTime  @default(now()) @map("viewed_at")
+  completedAt   DateTime? @map("completed_at")
+  institutionId Int       @map("institution_id")
+
+  student     User        @relation(fields: [studentId], references: [id])
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@unique([studentId, itemType, itemId])
+  @@index([studentId, courseId])
+  @@map("student_progress")
+}
+
+model CourseLecturer {
+  id            Int      @id @default(autoincrement())
+  courseId      Int      @map("course_id")
+  lecturerId    Int      @map("lecturer_id")
+  institutionId Int      @map("institution_id")
+  assignedAt    DateTime @default(now()) @map("assigned_at")
+
+  course      Course          @relation(fields: [courseId], references: [id])
+  lecturer    LecturerProfile @relation(fields: [lecturerId], references: [id])
+  institution Institution     @relation(fields: [institutionId], references: [id])
+
+  @@unique([courseId, lecturerId])
+  @@index([institutionId])
+  @@map("course_lecturers")
+}
+
+model CourseMaterial {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?
+  type          String    @default("document")
+  fileId        String?   @map("file_id")
+  externalUrl   String?   @map("external_url")
+  content       String?
+  courseId      Int       @map("course_id")
+  schoolId      Int       @map("school_id")
+  departmentId  Int?      @map("department_id")
+  weekNumber    Int?      @map("week_number")
+  isLocked      Boolean   @default(false) @map("is_locked")
+  unlockDate    DateTime? @map("unlock_date")
+  isVisible     Boolean   @default(true)  @map("is_visible")
+  sortOrder     Int       @default(0)     @map("sort_order")
+  institutionId Int       @map("institution_id")
+  createdBy     Int       @map("created_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt      @map("updated_at")
+
+  institution Institution        @relation(fields: [institutionId], references: [id])
+  course      Course             @relation(fields: [courseId], references: [id])
+  school      School             @relation(fields: [schoolId], references: [id])
+  department  Department?        @relation(fields: [departmentId], references: [id])
+  creator     User               @relation("MaterialCreator", fields: [createdBy], references: [id])
+  accessLogs  MaterialAccessLog[]
+
+  @@index([courseId])
+  @@index([institutionId])
+  @@map("course_materials")
+}
+
+model MaterialAccessLog {
+  id            Int      @id @default(autoincrement())
+  materialId    Int      @map("material_id")
+  userId        Int      @map("user_id")
+  institutionId Int      @map("institution_id")
+  accessedAt    DateTime @default(now()) @map("accessed_at")
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+
+  material CourseMaterial @relation(fields: [materialId], references: [id])
+  user     User           @relation("MaterialAccessUser", fields: [userId], references: [id])
+
+  @@index([materialId])
+  @@index([userId])
+  @@map("material_access_logs")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ASSIGNMENTS & SUBMISSIONS
+// ─────────────────────────────────────────────────────────────
+
+model Assignment {
+  id              Int       @id @default(autoincrement())
+  title           String
+  description     String?
+  instructions    String?
+  courseId        Int       @map("course_id")
+  schoolId        Int?      @map("school_id")
+  dueDate         DateTime  @map("due_date")
+  maxMarks        Int       @default(100) @map("max_marks")
+  allowLateSubmit Boolean   @default(false) @map("allow_late_submit")
+  latePenaltyPct  Int       @default(0)   @map("late_penalty_pct")
+  maxAttempts     Int       @default(1)   @map("max_attempts")
+  attachmentKey   String?   @map("attachment_key")
+  isPublished     Boolean   @default(false) @map("is_published")
+  // FIX ENG-L04: soft delete field added
+  isActive        Boolean   @default(true)  @map("is_active")
+  institutionId   Int       @map("institution_id")
+  createdBy       Int       @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt      @map("updated_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  course      Course      @relation(fields: [courseId], references: [id])
+  school      School?     @relation("SchoolAssignmentScope", fields: [schoolId], references: [id])
+  creator     User        @relation("AssignmentCreator", fields: [createdBy], references: [id])
+  submissions Submission[]
+
+  @@index([courseId])
+  @@index([institutionId])
+  @@map("assignments")
+}
+
+model Submission {
+  id           Int       @id @default(autoincrement())
+  assignmentId Int       @map("assignment_id")
+  studentId    Int       @map("student_id")
+  attempt      Int       @default(1)
+  status       String    @default("draft")
+  fileKeys     String[]  @map("file_keys")
+  textResponse String?   @map("text_response")
+  submittedAt  DateTime? @map("submitted_at")
+  marks        Decimal?  @db.Decimal(10, 2)
+  feedback     String?
+  gradedAt     DateTime? @map("graded_at")
+  gradedBy     Int?      @map("graded_by")
+  institutionId Int      @map("institution_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt      @map("updated_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  assignment  Assignment  @relation(fields: [assignmentId], references: [id])
+  student     User        @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId, attempt])
+  @@index([assignmentId]) // FIX MISC-07
+  @@index([studentId])
+  @@index([institutionId])
+  @@map("submissions")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  QUIZ ENGINE
+// ─────────────────────────────────────────────────────────────
+
+model Quiz {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?
+  courseId      Int       @map("course_id")
+  type          String    @default("practice")
+  timeLimitMins Int?      @map("time_limit_mins")
+  maxAttempts   Int       @default(1)     @map("max_attempts")
+  passMark      Int       @default(50)    @map("pass_mark")
+  randomizeQ    Boolean   @default(false) @map("randomize_questions")
+  randomizeA    Boolean   @default(false) @map("randomize_answers")
+  showResults   Boolean   @default(true)  @map("show_results")
+  openAt        DateTime? @map("open_at")
+  closeAt       DateTime? @map("close_at")
+  isPublished   Boolean   @default(false) @map("is_published")
+  // FIX ENG-L04: soft delete
+  isActive      Boolean   @default(true)  @map("is_active")
+  institutionId Int       @map("institution_id")
+  createdBy     Int       @map("created_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt      @map("updated_at")
+
+  institution Institution  @relation(fields: [institutionId], references: [id])
+  course      Course        @relation(fields: [courseId], references: [id])
+  questions   QuizQuestion[]
+  attempts    QuizAttempt[]
+
+  @@index([courseId])
+  @@index([institutionId])
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id          Int     @id @default(autoincrement())
+  quizId      Int     @map("quiz_id")
+  type        String
+  body        String
+  explanation String?
+  marks       Int     @default(1)
+  sortOrder   Int     @default(0) @map("sort_order")
+  imageKey    String? @map("image_key")
+
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options QuizOption[]
+  answers QuizAnswer[]
+
+  @@index([quizId])
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id         Int     @id @default(autoincrement())
+  questionId Int     @map("question_id")
+  body       String
+  isCorrect  Boolean @default(false) @map("is_correct")
+  sortOrder  Int     @default(0)     @map("sort_order")
+
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("quiz_options")
+}
+
+model QuizAttempt {
+  id            Int       @id @default(autoincrement())
+  quizId        Int       @map("quiz_id")
+  studentId     Int       @map("student_id")
+  attempt       Int       @default(1)
+  status        String    @default("in_progress")
+  score         Decimal?  @db.Decimal(5, 2)
+  startedAt     DateTime  @default(now()) @map("started_at")
+  submittedAt   DateTime? @map("submitted_at")
+  institutionId Int       @map("institution_id")
+  endsAt   DateTime? @map("ends_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  quiz        Quiz         @relation(fields: [quizId], references: [id])
+  student     User         @relation(fields: [studentId], references: [id])
+  answers     QuizAnswer[]
+
+  @@unique([quizId, studentId, attempt])
+  @@index([studentId])
+  @@map("quiz_attempts")
+}
+
+model QuizAnswer {
+  id           Int      @id @default(autoincrement())
+  attemptId    Int      @map("attempt_id")
+  questionId   Int      @map("question_id")
+  response     String?
+  isCorrect    Boolean? @map("is_correct")
+  marksAwarded Decimal? @db.Decimal(5, 2) @map("marks_awarded")
+
+  attempt  QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question QuizQuestion @relation(fields: [questionId], references: [id])
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId]) // FIX MISC-07
+  @@map("quiz_answers")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EXAMS & GRADES
+// ─────────────────────────────────────────────────────────────
+
+model Exam {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  courseId      Int      @map("course_id")
+  examType      String   @map("exam_type")
+  maxMarks      Int      @default(100) @map("max_marks")
+  durationMins  Int      @default(60)  @map("duration_mins")
+  scheduledDate DateTime @map("scheduled_date")
+  venue         String?
+  instructions  String?
+  allowRetakes  Boolean  @default(false) @map("allow_retakes")
+  isGraded      Boolean  @default(true)  @map("is_graded")
+  // FIX ENG-L04: soft delete
+  isActive      Boolean  @default(true)  @map("is_active")
+  institutionId Int      @map("institution_id")
+  createdBy     Int      @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  course      Course       @relation(fields: [courseId], references: [id])
+  creator     User         @relation("ExamCreator", fields: [createdBy], references: [id])
+  cohorts     ExamCohort[]
+  grades      Grade[]
+
+  @@index([courseId])
+  @@index([institutionId])
+  @@map("exams")
+}
+
+model ExamCohort {
+  id            Int      @id @default(autoincrement())
+  examId        Int      @map("exam_id")
+  cohortId      Int      @map("cohort_id")
+  institutionId Int      @map("institution_id")
+  assignedAt    DateTime @default(now()) @map("assigned_at")
+
+  exam   Exam   @relation(fields: [examId], references: [id])
+  cohort Cohort @relation(fields: [cohortId], references: [id])
+
+  @@unique([examId, cohortId])
+  @@map("exam_cohorts")
+}
+
+model Grade {
+  id            Int      @id @default(autoincrement())
+  examId        Int      @map("exam_id")
+  studentId     Int      @map("student_id")
+  marks         Decimal  @db.Decimal(10, 2)
+  feedback      String?
+  gradedAt      DateTime @default(now()) @map("graded_at")
+  gradedBy      Int      @map("graded_by")
+  institutionId Int      @map("institution_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  exam        Exam         @relation(fields: [examId], references: [id])
+  student     User         @relation(fields: [studentId], references: [id])
+  grader      User         @relation("GradeGrader", fields: [gradedBy], references: [id])
+
+  @@unique([examId, studentId])
+  @@index([examId])     // FIX MISC-07
+  @@index([studentId])
+  @@index([institutionId])
+  @@map("grades")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  TIMETABLE
+// ─────────────────────────────────────────────────────────────
+
+model TimetableSlot {
+  id            Int      @id @default(autoincrement())
+  institutionId Int      @map("institution_id")
+  courseId      Int      @map("course_id")
+  lecturerId    Int      @map("lecturer_id")
+  roomRef       String?  @map("room_ref")
+  startAt       DateTime @map("start_at")
+  endAt         DateTime @map("end_at")
+  recurrence    String?
+  published     Boolean  @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  course      Course       @relation(fields: [courseId], references: [id])
+  lecturer    User         @relation("TimetableLecturer", fields: [lecturerId], references: [id])
+
+  @@index([institutionId])
+  @@index([courseId])
+  @@index([lecturerId, startAt, endAt])
+  @@map("timetable_slots")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ONLINE CLASSES & RECORDINGS
+// ─────────────────────────────────────────────────────────────
+
+model OnlineClassSession {
+  id            Int      @id @default(autoincrement())
+  courseId      Int      @map("course_id")
+  lecturerId    Int      @map("lecturer_id")
+  institutionId Int      @map("institution_id")
+  title         String?
+  description   String?
+  startAt       DateTime @map("start_at")
+  endAt         DateTime @map("end_at")
+  actualStartAt DateTime? @map("actual_start_at")
+  actualEndAt   DateTime? @map("actual_end_at")
+  joinUrl       String   @map("join_url")
+  provider      String   @default("zoom")
+  // "scheduled" | "live" | "ended" | "cancelled"
+  status        String   @default("scheduled")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  course      Course           @relation(fields: [courseId], references: [id])
+  lecturer    User             @relation(fields: [lecturerId], references: [id])
+  institution Institution      @relation(fields: [institutionId], references: [id])
+  recordings  ClassRecording[]
+
+  @@index([courseId])
+  @@index([lecturerId])
+  @@index([institutionId])
+  @@map("online_class_sessions")
+}
+
+model ClassRecording {
+  id          Int       @id @default(autoincrement())
+  sessionId   Int       @map("session_id")
+  title       String?
+  s3Key       String    @map("s3_key")
+  durationSec Int?      @map("duration_sec")
+  availableAt DateTime? @map("available_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt      @map("updated_at")
+
+  session OnlineClassSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("class_recordings")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ATTENDANCE
+// ─────────────────────────────────────────────────────────────
+
+model AttendanceRecord {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  sessionRef    String   @map("session_ref")
+  sessionTopic  String?  @map("session_topic")
+  sessionDate   DateTime? @map("session_date")
+  source        String
+  verified      Boolean  @default(false)
+  overrideById  Int?     @map("override_by_id")
+  institutionId Int      @map("institution_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  user        User        @relation(fields: [userId], references: [id])
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@index([userId])
+  @@index([sessionRef])
+  @@index([institutionId])
+  @@map("attendance_records")
+}
+
+model BiometricEvent {
+  id          Int       @id @default(autoincrement())
+  deviceId    String?   @map("device_id")
+  externalId  String?   @map("external_id")
+  payload     Json?
+  processedAt DateTime? @map("processed_at")
+
+  @@index([externalId])
+  @@map("biometric_events")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ANNOUNCEMENTS
+// ─────────────────────────────────────────────────────────────
+
+model Announcement {
+  id            Int       @id @default(autoincrement())
+  title         String
+  body          String
+  courseId      Int?      @map("course_id")
+  institutionId Int       @map("institution_id")
+  createdBy     Int       @map("created_by")
+  publishAt     DateTime  @default(now()) @map("publish_at")
+  expiresAt     DateTime? @map("expires_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@index([institutionId])
+  @@index([courseId])
+  @@map("announcements")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  PAYMENTS
+// ─────────────────────────────────────────────────────────────
+
+model PaymentTransaction {
+  id                 Int       @id @default(autoincrement())
+  userId             Int       @map("user_id")
+  institutionId      Int?      @map("institution_id")
+  amount             Decimal   @db.Decimal(10, 2)
+  currency           String    @default("KES")
+  status             String
+  provider           String    @default("mpesa")
+  externalId         String?   @map("external_id")
+  idempotencyKey     String?   @unique @map("idempotency_key")
+  callbackReceivedAt DateTime? @map("callback_received_at")
+  metadata           Json?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt      @map("updated_at")
+
+  user        User         @relation(fields: [userId], references: [id])
+  institution Institution? @relation(fields: [institutionId], references: [id])
+
+  @@index([userId])
+  @@map("payment_transactions")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  NOTIFICATIONS
+// ─────────────────────────────────────────────────────────────
+
+model Notification {
+  id            Int       @id @default(autoincrement())
+  userId        Int       @map("user_id")
+  institutionId Int?      @map("institution_id")
+  channel       String
+  subject       String?
+  body          String?
+  sentAt        DateTime? @map("sent_at")
+  readAt        DateTime? @map("read_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  user        User         @relation(fields: [userId], references: [id])
+  institution Institution? @relation(fields: [institutionId], references: [id])
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  DOCUMENTS
+// ─────────────────────────────────────────────────────────────
+
+model Document {
+  id            Int      @id @default(autoincrement())
+  filename      String
+  originalName  String   @map("original_name")
+  mimeType      String   @map("mime_type")
+  size          Int
+  s3Key         String   @map("s3_key")
+  thumbnailKey  String?  @map("thumbnail_key")
+  extractedText String?  @map("extracted_text")
+  metadata      Json     @default("{}")
+  uploadedBy    Int      @map("uploaded_by")
+  type          String   @default("general")
+  courseId      Int?     @map("course_id")
+  institutionId Int?     @map("institution_id")
+  isPublic      Boolean  @default(false) @map("is_public")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  uploader    User         @relation("DocumentUploader", fields: [uploadedBy], references: [id])
+  course      Course?      @relation("CourseDocuments", fields: [courseId], references: [id])
+  institution Institution? @relation(fields: [institutionId], references: [id])
+
+  @@index([uploadedBy])
+  @@index([courseId])
+  @@map("documents")
+}
+
+// ─────────────────────────────────────────────────────────────
+//  AUDIT LOG
+// ─────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id            Int       @id @default(autoincrement())
+  institutionId Int?      @map("institution_id")
+  actorId       Int?      @map("actor_id")
+  action        String
+  resourceType  String    @map("resource_type")
+  resourceId    String?   @map("resource_id")
+  payload       Json?
+  ip            String?
+  at            DateTime  @default(now())
+
+  actor       User?        @relation("AuditActor", fields: [actorId], references: [id])
+  institution Institution? @relation(fields: [institutionId], references: [id])
+
+  @@index([institutionId])
+  @@index([actorId])
+  @@index([at])
+  @@map("audit_logs")
+}

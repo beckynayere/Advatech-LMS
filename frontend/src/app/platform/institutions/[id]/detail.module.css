@@ -1,0 +1,208 @@
+/* src/app/platform/institutions/[id]/detail.module.css */
+
+.page { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Top bar ── */
+.topBar { display: flex; align-items: center; justify-content: space-between; }
+.backLink {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-secondary); text-decoration: none;
+  transition: color var(--transition);
+}
+.backLink:hover { color: var(--primary); }
+.refreshBtn {
+  display: flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px;
+  background: none; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer;
+  transition: all var(--transition);
+}
+.refreshBtn:hover { border-color: var(--primary); color: var(--primary); }
+.refreshBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Error / confirm banners ── */
+.errorBanner {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--danger-bg); border: 1px solid #fca5a5;
+  border-radius: var(--radius-md); padding: 10px 14px;
+  font-size: 13px; color: var(--danger);
+}
+.inlineConfirm {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--danger-bg); border: 1px solid #fca5a5;
+  border-radius: var(--radius-md); padding: 12px 16px;
+  font-size: 13px; color: var(--danger);
+}
+.btnDanger {
+  height: 30px; padding: 0 14px;
+  background: var(--danger); color: #fff; border: none;
+  border-radius: var(--radius-md); font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.btnDanger:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnGhost {
+  height: 30px; padding: 0 14px;
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--radius-md); font-size: 12px; color: var(--text-secondary); cursor: pointer;
+}
+
+/* ── 2-col grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.leftCol, .rightCol { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Card ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.cardHeader {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px; border-bottom: 1px solid var(--border-light);
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  background: var(--gray-50);
+}
+.cardHeader svg { color: var(--text-muted); }
+.cardNote { margin-left: auto; font-size: 11px; font-weight: 400; color: var(--text-muted); }
+.liveBadge {
+  margin-left: auto; font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  background: var(--danger); color: #fff; padding: 2px 6px; border-radius: var(--radius-full);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* ── Status block ── */
+.statusBlock {
+  padding: 16px 18px; display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+.pollNote {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text-muted);
+}
+.pulseDot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--warning);
+  display: inline-block; animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ── Failure box ── */
+.failureBox {
+  margin: 12px 18px; padding: 12px 14px;
+  background: var(--danger-bg); border: 1px solid #fca5a5;
+  border-radius: var(--radius-md);
+}
+.failureTitle {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--danger); margin-bottom: 6px;
+}
+.failureStep { font-size: 12px; color: var(--danger); margin-bottom: 4px; }
+.failureMsg { font-size: 12px; color: var(--danger); line-height: 1.5; font-family: 'DM Mono', monospace; }
+
+/* ── Actions block ── */
+.actionsBlock {
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;
+}
+.actionsBusy {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: var(--text-muted); font-style: italic; padding: 4px 0;
+}
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  height: 36px; padding: 0 16px; border: none; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;
+  transition: all var(--transition);
+}
+.btnApprove   { background: var(--info-bg);    color: var(--info); }
+.btnApprove:hover { background: #bfdbfe; }
+.btnProvision { background: #f0fdf4; color: var(--success); }
+.btnProvision:hover { background: #bbf7d0; }
+.btnRetry     { background: var(--warning-bg); color: var(--warning); }
+.btnRetry:hover { background: #fde68a; }
+.btnSettings  { background: var(--gray-100); color: var(--text-secondary); }
+.btnSettings:hover { background: var(--gray-200); }
+.btnDelete    { background: var(--danger-bg); color: var(--danger); }
+.btnDelete:hover { background: #fecaca; }
+
+/* ── Info grid ── */
+.infoGrid { padding: 4px 0; }
+.infoRow {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 9px 18px; border-bottom: 1px solid var(--border-light);
+}
+.infoRow:last-child { border-bottom: none; }
+.infoLabel { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.infoValue { font-size: 13px; color: var(--text-primary); font-weight: 500; text-align: right; }
+.na { color: var(--text-muted); font-style: italic; }
+
+/* ── Infra grid ── */
+.infraGrid { padding: 4px 0; }
+.infraRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-bottom: 1px solid var(--border-light);
+}
+.infraRow:last-child { border-bottom: none; }
+.infraIcon { color: var(--text-muted); flex-shrink: 0; }
+.infraLabel { font-size: 12px; color: var(--text-muted); width: 120px; flex-shrink: 0; }
+.infraValue { font-size: 12px; color: var(--text-primary); }
+.mono { font-family: 'DM Mono', monospace; }
+
+/* ── Status badge ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 600;
+}
+.badgeDot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge_gray    { background: var(--gray-100); color: var(--gray-600); }
+.badge_blue    { background: var(--info-bg);    color: var(--info); }
+.badge_warning { background: var(--warning-bg); color: var(--warning); }
+.badge_success { background: var(--success-bg); color: var(--success); }
+.badge_danger  { background: var(--danger-bg);  color: var(--danger); }
+
+/* ── Logs viewer ── */
+.logsViewer {
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 0;
+  max-height: 380px; overflow-y: auto;
+  font-family: 'DM Mono', monospace;
+}
+.logsEmpty {
+  padding: 24px 18px; font-size: 13px; color: var(--text-muted); font-style: italic;
+}
+.logEntry {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.logEntry:last-child { border-bottom: none; }
+.logStep { display: flex; align-items: center; gap: 8px; }
+.logStepName { font-size: 12px; font-weight: 600; color: var(--text-primary); flex: 1; }
+.logTs { font-size: 10px; color: var(--text-muted); }
+.logMsg {
+  font-size: 11px; color: var(--text-secondary);
+  margin-top: 3px; margin-left: 24px; line-height: 1.5;
+}
+.logMsgFailed { color: var(--danger); }
+.logSuccess  { color: var(--success); }
+.logFailed   { color: var(--danger); }
+.logProgress { color: var(--warning); }
+.logPending  { color: var(--border); }
+
+/* ── Loading / error states ── */
+.fullLoading, .fullError {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; min-height: 300px; color: var(--text-muted); font-size: 14px;
+}
+.fullError { color: var(--danger); }
+
+/* ── Spin ── */
+.spinIcon { animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}

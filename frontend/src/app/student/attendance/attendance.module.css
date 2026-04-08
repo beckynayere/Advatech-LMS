@@ -1,0 +1,88 @@
+.page { display: flex; flex-direction: column; gap: 24px; }
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.summaryCard {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.summaryValue {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.summaryLabel { font-size: 12px; color: var(--text-muted); }
+
+.courseCard {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.courseHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.courseName { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+
+.rateWrap { display: flex; align-items: center; gap: 10px; }
+
+.rateBar {
+  width: 80px;
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.rateFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+.rateFill.high { background: var(--success); }
+.rateFill.mid { background: var(--warning); }
+.rateFill.low { background: var(--danger); }
+
+.rateText {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 36px;
+}
+
+.sessionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+}
+
+.sessionRow:last-child { border-bottom: none; }
+
+.sessionTopic { color: var(--text-secondary); }
+.sessionDate { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+@media (max-width: 640px) { .summaryGrid { grid-template-columns: 1fr; } }

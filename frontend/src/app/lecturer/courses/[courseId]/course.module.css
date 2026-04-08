@@ -1,0 +1,526 @@
+/* DESTINATION: src/app/lecturer/courses/[courseId]/course.module.css */
+/* ALSO COPY TO:  src/app/student/courses/[courseId]/course.module.css  */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 40px;
+}
+
+/* ── Info bar ──────────────────────────────────────────────────────────────── */
+.infoBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+
+.infoBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Student variant (no infoBarLeft wrapper) */
+.colorMark,
+.courseColorMark {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.teal   { background: var(--primary); }
+.blue   { background: #2563eb; }
+.purple { background: #7c3aed; }
+.amber  { background: #d97706; }
+.orange { background: #ea580c; }
+.green  { background: #16a34a; }
+.red    { background: #dc2626; }
+
+.titleWrap,
+.courseTitleWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.title,
+.courseTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub,
+.courseSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.stats,
+.infoStats {
+  display: flex;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.stat,
+.infoStat {
+  text-align: center;
+}
+
+.statValue,
+.infoStatValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statLabel,
+.infoStatLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Progress bar ──────────────────────────────────────────────────────────── */
+.progressBarWrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+}
+
+.progressBarLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.progressBarTrack {
+  height: 8px;
+  background: var(--bg-hover);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* ── Quick links ───────────────────────────────────────────────────────────── */
+.quickLinks {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .quickLinks { grid-template-columns: repeat(2, 1fr); }
+}
+
+.quickLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.quickLink:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+}
+
+.qlIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.qlIcon.teal   { background: rgba(13,148,136,.12); color: var(--primary); }
+.qlIcon.blue   { background: rgba(37,99,235,.12);  color: #2563eb; }
+.qlIcon.purple { background: rgba(124,58,237,.12); color: #7c3aed; }
+.qlIcon.amber  { background: rgba(217,119,6,.12);  color: #d97706; }
+.qlIcon.orange { background: rgba(234,88,12,.12);  color: #ea580c; }
+
+.qlLabel {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Card wrapper ──────────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Module list ───────────────────────────────────────────────────────────── */
+.moduleList {
+  display: flex;
+  flex-direction: column;
+}
+
+.moduleBlock {
+  border-bottom: 1px solid var(--border);
+}
+
+.moduleBlock:last-child {
+  border-bottom: none;
+}
+
+.moduleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.moduleHeader:hover {
+  background: var(--bg-hover);
+}
+
+.moduleLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.moduleNum {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.moduleTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.moduleTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.moduleDesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemCount {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Student module right */
+.moduleRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.modProgressText {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.modProgressBar {
+  width: 60px;
+  height: 5px;
+  background: var(--bg-hover);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.modProgressFill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* Lecturer module actions */
+.moduleActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.chevron {
+  font-size: 16px;
+  color: var(--text-muted);
+  display: inline-block;
+  transition: transform 0.2s;
+  margin-left: 6px;
+}
+
+/* ── Module items ──────────────────────────────────────────────────────────── */
+.moduleItems {
+  background: var(--bg-main);
+  border-top: 1px solid var(--border);
+}
+
+.emptyItems {
+  padding: 16px 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Lecturer item row */
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background 0.12s;
+}
+
+.itemRow:last-of-type {
+  border-bottom: none;
+}
+
+a.itemRow:hover:not(.itemLocked) {
+  background: var(--bg-hover);
+}
+
+.itemLocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.itemDone {
+  opacity: 0.7;
+}
+
+.itemOrder {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 18px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.itemIcon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.itemIcon.material   { background: rgba(13,148,136,.12); color: var(--primary); }
+.itemIcon.assignment { background: rgba(234,88,12,.12);  color: #ea580c; }
+.itemIcon.quiz       { background: rgba(37,99,235,.12);  color: #2563eb; }
+
+.itemTypeTag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+.itemTypeTag.material   { background: rgba(13,148,136,.12);  color: var(--primary); }
+.itemTypeTag.assignment { background: rgba(234,88,12,.12);   color: #ea580c; }
+.itemTypeTag.quiz       { background: rgba(37,99,235,.12);   color: #2563eb; }
+
+.itemTitle {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.dueDate, .quizTime {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.itemStatus {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.doneIcon { color: #16a34a; }
+.goIcon   { color: var(--text-muted); }
+
+/* Add item button (lecturer) */
+.addItemBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.addItemBtn:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.addBtn:hover { opacity: 0.88; }
+
+.iconBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+
+.iconBtn:hover          { background: var(--bg-hover); }
+.iconBtn.danger:hover   { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+.iconBtn.small          { width: 24px; height: 24px; border-radius: 5px; }
+
+.danger {
+  /* base state — subtle red tint on the icon */
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+/* Left-border colour strip on each module item row */
+.typeIndicator {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+ 
+/* Content-type label pill (student view) */
+.typeLabel {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  white-space: nowrap;
+}

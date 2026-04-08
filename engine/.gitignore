@@ -1,0 +1,30 @@
+# Secrets — never commit
+.env
+.env.local
+.env.production
+.env.staging
+
+# Build
+dist/
+*.js.map
+
+# Node
+node_modules/
+.pnpm-store/
+
+# Prisma generated
+prisma/generated/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+pino.log
+
+*Zone.Identifier

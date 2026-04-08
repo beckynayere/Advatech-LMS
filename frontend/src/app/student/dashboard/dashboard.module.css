@@ -1,0 +1,229 @@
+.page { display: flex; flex-direction: column; gap: 24px; }
+
+.banner {
+  background: linear-gradient(135deg, #0f1117 0%, #1a2035 100%);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: 80px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bannerText {}
+.bannerGreeting { font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
+.bannerTitle { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.4px; margin-bottom: 6px; }
+.bannerTitle span { color: #a78bfa; }
+.bannerSub { font-size: 13px; color: #94a3b8; }
+
+.bannerRight { flex-shrink: 0; }
+
+.regBadge {
+  background: rgba(124,58,237,0.2);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+}
+
+.regLabel {
+  font-size: 10px;
+  color: #a78bfa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 2px;
+}
+
+.regValue {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardTitleIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: #f5f3ff;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardAction {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  text-decoration: none;
+}
+
+.cardAction:hover { background: var(--primary-light); }
+
+.courseRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-light);
+  text-decoration: none;
+  transition: background var(--transition);
+}
+
+.courseRow:last-child { border-bottom: none; }
+.courseRow:hover { background: var(--gray-50); }
+
+.courseColorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.courseColorDot.teal { background: var(--primary); }
+.courseColorDot.blue { background: #2563eb; }
+.courseColorDot.purple { background: #7c3aed; }
+.courseColorDot.amber { background: #d97706; }
+
+.courseInfo { flex: 1; }
+.courseName { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.courseMeta { font-size: 11px; color: var(--text-muted); }
+
+.taskItem {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.taskItem:last-child { border-bottom: none; }
+
+.taskTitle { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+.taskMeta { font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; }
+
+@media (max-width: 1024px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .banner { flex-direction: column; align-items: flex-start; }
+}
+
+/* Student card — the grid item wrapper */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: box-shadow 0.15s, transform 0.1s;
+}
+.card:hover {
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
+  transform: translateY(-1px);
+}
+
+/* Info block — sits next to the avatar */
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Student display name */
+.name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+/* Registration number chip */
+.regNo {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+/* Wraps each line of meta info (email, department, etc.) */
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.metaRow svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}

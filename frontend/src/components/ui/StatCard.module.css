@@ -1,0 +1,110 @@
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0.8;
+}
+
+.card.teal::before { background: var(--primary); }
+.card.blue::before { background: #2563eb; }
+.card.purple::before { background: #7c3aed; }
+.card.amber::before { background: #d97706; }
+.card.green::before { background: #059669; }
+.card.red::before { background: #dc2626; }
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card.teal .iconWrap { background: var(--primary-light); color: var(--primary); }
+.card.blue .iconWrap { background: #eff6ff; color: #2563eb; }
+.card.purple .iconWrap { background: #f5f3ff; color: #7c3aed; }
+.card.amber .iconWrap { background: #fffbeb; color: #d97706; }
+.card.green .iconWrap { background: #ecfdf5; color: #059669; }
+.card.red .iconWrap { background: #fef2f2; color: #dc2626; }
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: var(--radius-full);
+}
+
+.trend.up {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.trend.down {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.trend.neutral {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.bottom {}
+
+.value {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-light);
+}

@@ -1,0 +1,485 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ── WELCOME BANNER ── */
+.banner {
+  background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1a2035 100%);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: 120px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bannerText {}
+
+.bannerGreeting {
+  font-size: 13px;
+  color: var(--sidebar-text);
+  margin-bottom: 4px;
+}
+
+.bannerTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.4px;
+  margin-bottom: 8px;
+}
+
+.bannerTitle span {
+  color: var(--primary);
+}
+
+.bannerSub {
+  font-size: 13px;
+  color: var(--sidebar-text);
+  line-height: 1.6;
+}
+
+.bannerBadges {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.bannerBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+.bannerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.semesterTag {
+  background: rgba(13,148,136,0.2);
+  border: 1px solid rgba(13,148,136,0.3);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  text-align: right;
+}
+
+.semesterLabel {
+  font-size: 10px;
+  color: var(--primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 2px;
+}
+
+.semesterName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── GRID LAYOUT ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.gridFull {
+  grid-column: 1 / -1;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardTitleIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardAction {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  text-decoration: none;
+}
+
+.cardAction:hover {
+  background: var(--primary-light);
+}
+
+.cardBody {
+  padding: 0;
+}
+
+/* ── QUICK ACTIONS ── */
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-light);
+}
+
+.quickAction {
+  background: var(--surface);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background var(--transition);
+  text-decoration: none;
+  border: none;
+}
+
+.quickAction:hover {
+  background: var(--gray-50);
+}
+
+.qaIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition);
+}
+
+.quickAction:hover .qaIcon {
+  transform: translateY(-2px);
+}
+
+.qaIcon.teal { background: var(--primary-light); color: var(--primary); }
+.qaIcon.blue { background: #eff6ff; color: #2563eb; }
+.qaIcon.purple { background: #f5f3ff; color: #7c3aed; }
+.qaIcon.amber { background: #fffbeb; color: #d97706; }
+
+.qaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ── COURSES TABLE ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 20px;
+  text-align: left;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.table td {
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: var(--gray-50);
+}
+
+.courseCode {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.colorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.teal { background: var(--primary); }
+.blue { background: #2563eb; }
+.purple { background: #7c3aed; }
+.amber { background: #d97706; }
+
+/* ── SEMESTER INFO ── */
+.semesterCard {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.semesterInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.semesterMeta {}
+
+.semesterMetaName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.semesterDates {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.semesterStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.semStat {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.semStatValue {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.semStatLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .quickActions { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+  .banner { flex-direction: column; align-items: flex-start; }
+  .bannerRight { align-items: flex-start; }
+  .semesterStats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .statsGrid { grid-template-columns: 1fr 1fr; }
+  .quickActions { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Quick Actions grid ─────────────────────────────────────────────── */
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .quickGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Quick action card (Link) */
+.quickCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.1s;
+}
+.quickCard:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+}
+/* Color accent variants (reuse your existing color classes) */
+.quickCard.teal   { border-left: 3px solid var(--primary); }
+.quickCard.blue   { border-left: 3px solid #2563eb; }
+.quickCard.purple { border-left: 3px solid #7c3aed; }
+.quickCard.orange { border-left: 3px solid #ea580c; }
+.quickCard.amber  { border-left: 3px solid #d97706; }
+.quickCard.green  { border-left: 3px solid #16a34a; }
+
+/* ── Recent courses list ─────────────────────────────────────────────── */
+.courseRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-light);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background 0.12s;
+}
+.courseRow:last-child { border-bottom: none; }
+
+/* Small color-coded dot for course */
+.courseColorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--primary);
+}
+/* Color variants: reuse existing .teal/.blue/.purple etc from global or parent CSS */
+.courseColorDot.teal   { background: var(--primary); }
+.courseColorDot.blue   { background: #2563eb; }
+.courseColorDot.purple { background: #7c3aed; }
+.courseColorDot.amber  { background: #d97706; }
+.courseColorDot.orange { background: #ea580c; }
+.courseColorDot.green  { background: #16a34a; }
+.courseColorDot.red    { background: #dc2626; }
+
+/* Text block next to dot */
+.courseInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.courseName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.courseMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

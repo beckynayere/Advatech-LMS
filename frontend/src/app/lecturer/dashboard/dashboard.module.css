@@ -1,0 +1,307 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.banner {
+  background: linear-gradient(135deg, #0f1117 0%, #1a2035 100%);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: 80px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bannerText {}
+
+.bannerGreeting {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.bannerTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+}
+
+.bannerTitle span { color: #60a5fa; }
+
+.bannerSub {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.bannerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.bannerTag {
+  background: rgba(37,99,235,0.2);
+  border: 1px solid rgba(37,99,235,0.3);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  text-align: right;
+}
+
+.bannerTagLabel {
+  font-size: 10px;
+  color: #60a5fa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 2px;
+}
+
+.bannerTagValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardTitleIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardAction {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  text-decoration: none;
+}
+
+.cardAction:hover { background: var(--primary-light); }
+
+/* Course rows */
+.courseRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition);
+  text-decoration: none;
+}
+
+.courseRow:last-child { border-bottom: none; }
+.courseRow:hover { background: var(--gray-50); }
+
+.courseColorBar {
+  width: 4px;
+  height: 40px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.courseColorBar.teal { background: var(--primary); }
+.courseColorBar.blue { background: #2563eb; }
+.courseColorBar.purple { background: #7c3aed; }
+.courseColorBar.amber { background: #d97706; }
+
+.courseInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.courseName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.courseMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.courseCode {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  color: var(--text-secondary);
+}
+
+/* Pending grading */
+.pendingItem {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pendingItem:last-child { border-bottom: none; }
+
+.pendingTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pendingMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.pendingCount {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--warning);
+  background: var(--warning-bg);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .banner { flex-direction: column; align-items: flex-start; }
+  .bannerRight { align-items: flex-start; }
+}
+
+/* Container for lecturer meta lines (email, department) */
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+/* A single meta line (icon + text) */
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.metaRow svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+/* Small color dot next to each course in the courses list */
+.courseColorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--lecturer-color, #2563eb);
+}
+.courseColorDot.blue   { background: #2563eb; }
+.courseColorDot.teal   { background: #0d9488; }
+.courseColorDot.purple { background: #7c3aed; }
+.courseColorDot.amber  { background: #d97706; }
+.courseColorDot.orange { background: #ea580c; }
+.courseColorDot.green  { background: #16a34a; }
+.courseColorDot.red    { background: #dc2626; }
+
+/* Row in the "Pending Grading" list */
+.pendingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-light);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background 0.12s;
+}
+.pendingRow:last-child { border-bottom: none; }
+.pendingRow:hover { background: var(--bg-hover); }
+
+/* Student name inside a pending row */
+.pendingName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}

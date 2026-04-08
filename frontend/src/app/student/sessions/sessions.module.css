@@ -1,0 +1,174 @@
+/* DESTINATION: src/app/lecturer/sessions/sessions.module.css */
+/* Also used as base for student sessions — copy and adjust as needed */
+
+.page { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.toolbarNote { font-size: 12px; color: var(--text-muted); }
+.toolbarRight { display: flex; gap: 8px; align-items: center; }
+.refreshBtn {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  background: none; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
+}
+.refreshBtn:hover { border-color: var(--primary); color: var(--primary); }
+.refreshBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.coursesBtn {
+  display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px;
+  background: var(--primary); color: #fff; border-radius: var(--radius-md);
+  font-size: 12px; font-weight: 600; text-decoration: none; transition: background var(--transition);
+}
+.coursesBtn:hover { background: var(--primary-dark); }
+
+/* ── Groups ── */
+.group { display: flex; flex-direction: column; gap: 10px; }
+.groupHeader {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  padding-bottom: 8px; border-bottom: 1.5px solid var(--border-light);
+}
+.groupHeader svg { color: var(--text-muted); }
+.groupCount {
+  font-size: 11px; font-weight: 700; background: var(--gray-200);
+  color: var(--text-muted); padding: 1px 6px; border-radius: var(--radius-full);
+}
+.groupEmpty { font-size: 13px; color: var(--text-muted); padding: 12px 0; font-style: italic; }
+
+/* ── Session card ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;
+  transition: box-shadow var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.cardLive {
+  border-color: #6ee7b7;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08), var(--shadow-sm);
+}
+.cardTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.cardLeft { flex: 1; min-width: 0; }
+.cardCourse { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.cardTitle { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.cardDesc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.4; }
+.cardBadges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+.cardMeta {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 11px; color: var(--text-muted);
+}
+.cardMeta span { display: flex; align-items: center; gap: 4px; }
+.provider { text-transform: capitalize; font-weight: 500; }
+.cardActions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600;
+}
+.badge_blue    { background: var(--info-bg);    color: var(--info); }
+.badge_success { background: var(--success-bg); color: var(--success); }
+.badge_gray    { background: var(--gray-100);   color: var(--gray-600); }
+.badge_danger  { background: var(--danger-bg);  color: var(--danger); }
+.livePulse {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--success);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.recBadge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px; border-radius: var(--radius-full);
+  font-size: 10px; font-weight: 600;
+}
+.recBadge_success { background: var(--success-bg); color: var(--success); }
+.recBadge_warning { background: var(--warning-bg); color: var(--warning); }
+.recBadge_gray    { background: var(--gray-100);   color: var(--gray-500); }
+
+/* ── Action buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 30px; padding: 0 12px; border: none; border-radius: var(--radius-md);
+  font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btnStart   { background: var(--success-bg); color: var(--success); }
+.btnStart:hover { background: #bbf7d0; }
+.btnJoin    { background: var(--primary); color: #fff; }
+.btnJoin:hover { background: var(--primary-dark); }
+.btnEnd     { background: var(--danger-bg); color: var(--danger); }
+.btnEnd:hover { background: #fecaca; }
+.btnUpload  { background: var(--warning-bg); color: var(--warning); }
+.btnUpload:hover { background: #fde68a; }
+.btnWatch   { background: var(--info-bg); color: var(--info); }
+.btnWatch:hover { background: #bfdbfe; }
+.btnDelete  { background: var(--gray-100); color: var(--danger); padding: 0 9px; }
+.btnDelete:hover { background: var(--danger-bg); }
+.busyLabel { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+
+/* ── Loading / toast ── */
+.loadingState {
+  display: flex; align-items: center; gap: 10px; justify-content: center;
+  padding: 48px; color: var(--text-muted); font-size: 14px;
+}
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 11px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg); animation: slideUp 0.2s ease;
+}
+.toast_success { background: var(--success-bg); color: var(--success); border: 1px solid #6ee7b7; }
+.toast_danger  { background: var(--danger-bg);  color: var(--danger);  border: 1px solid #fca5a5; }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── Modal ── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+}
+.modal {
+  background: var(--surface); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl); width: 460px; max-width: calc(100vw - 32px);
+}
+.modalHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; font-size: 15px; font-weight: 700;
+  border-bottom: 1px solid var(--border-light);
+}
+.modalClose {
+  background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 2px;
+}
+.modalBody { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+.modalSessionName { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.modalErr {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--danger);
+  background: var(--danger-bg); padding: 8px 12px; border-radius: var(--radius-sm);
+}
+.modalHint { font-size: 11px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+.modalFooter {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 14px 22px; border-top: 1px solid var(--border-light);
+}
+.label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.input {
+  height: 36px; padding: 0 12px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); font-size: 13px; outline: none;
+  transition: border-color var(--transition); width: 100%;
+}
+.input:focus { border-color: var(--primary); }
+.btnPrimary {
+  display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 16px;
+  background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnGhost {
+  height: 34px; padding: 0 14px; background: none; border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); font-size: 12px; color: var(--text-secondary); cursor: pointer;
+}
+
+/* ── Spin ── */
+.spin { animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

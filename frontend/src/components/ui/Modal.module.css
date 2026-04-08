@@ -1,0 +1,351 @@
+/* DESTINATION: src/components/ui/Modal.module.css — FULL REPLACEMENT */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.2s ease;
+  border: 1px solid var(--border-light);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal.lg { max-width: 640px; }
+.modal.sm { max-width: 380px; }
+
+.header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.headerText {}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.closeBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  margin-top: -2px;
+}
+.closeBtn:hover { background: var(--gray-100); color: var(--text-primary); }
+
+.body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Form elements ────────────────────────────────────────────────────── */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  height: 40px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--gray-50);
+  transition: border-color var(--transition), background var(--transition);
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 80px;
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── Checkbox rows ────────────────────────────────────────────────────── */
+.checkRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+.checkLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Alias used by module/item modals */
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+.checkboxRow input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Notice/info block */
+.notice {
+  padding: 12px 14px;
+  background: var(--info-bg);
+  border-left: 3px solid var(--info);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btnPrimary {
+  height: 38px;
+  padding: 0 20px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btnPrimary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btnSecondary {
+  height: 38px;
+  padding: 0 16px;
+  background: none;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btnSecondary:hover { background: var(--gray-50); border-color: var(--gray-300); }
+
+/* ── Named button aliases (used by admin/lecturer pages) ──────────────── */
+.cancelBtn {
+  height: 38px;
+  padding: 0 16px;
+  background: none;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.cancelBtn:hover { background: var(--gray-50); }
+
+/* Alias: older pages use modalStyles.cancel */
+.cancel {
+  height: 38px;
+  padding: 0 16px;
+  background: none;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.cancel:hover { background: var(--gray-50); }
+
+.saveBtn {
+  height: 38px;
+  padding: 0 20px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.saveBtn:hover { background: var(--primary-dark); }
+.saveBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Alias: older pages use modalStyles.submit */
+.submit {
+  height: 38px;
+  padding: 0 20px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.submit:hover { background: var(--primary-dark); }
+.submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.deleteBtn {
+  height: 38px;
+  padding: 0 20px;
+  background: var(--danger);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.deleteBtn:hover { background: #b91c1c; }
+
+/* ── Footer row alias (used by module/item modals) ────────────────────── */
+/* Some pages use modalStyles.actions as the footer actions container     */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+
+/* ── Type selector buttons (Add Item modal) ───────────────────────────── */
+.typeBtn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-main);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.typeBtn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.typeBtnActive {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+@media (max-width: 480px) {
+  .overlay { padding: 16px; }
+  .modal { max-height: 95vh; }
+  .row { grid-template-columns: 1fr; }
+  .checkRow { gap: 8px; }
+}

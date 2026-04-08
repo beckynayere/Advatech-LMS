@@ -164,10 +164,25 @@ router.delete("/:id/lecturers/:lecturerId", adminOnly, asyncHandler(async (req: 
  
 // ─── MATERIALS ────────────────────────────────────────────────────────────────
  
+// const materialCreateSchema = z.object({
+//   title:        z.string().min(1).max(255),
+//   description:  z.string().optional().nullable(),
+//   type:         z.enum(["document", "video", "link", "embed"]).default("document"),type:         z.enum(["document", "video", "link", "embed", "page"]).default("document"),
+//   externalUrl:  z.string().url().optional().nullable(),
+//   content:      z.string().optional().nullable(),
+//   weekNumber:   z.number().int().min(1).max(52).optional().nullable(),
+//   isLocked:     z.boolean().default(false),
+//   unlockDate:   z.string().datetime().optional().nullable(),
+//   isVisible:    z.boolean().default(true),
+//   sortOrder:    z.number().int().default(0),
+//   schoolId:     z.number().int().positive(),
+//   departmentId: z.number().int().positive().optional().nullable(),
+// });
+
 const materialCreateSchema = z.object({
   title:        z.string().min(1).max(255),
   description:  z.string().optional().nullable(),
-  type:         z.enum(["document", "video", "link", "embed"]).default("document"),type:         z.enum(["document", "video", "link", "embed", "page"]).default("document"),
+  type:         z.enum(["document", "video", "link", "embed", "page"]).default("document"),
   externalUrl:  z.string().url().optional().nullable(),
   content:      z.string().optional().nullable(),
   weekNumber:   z.number().int().min(1).max(52).optional().nullable(),

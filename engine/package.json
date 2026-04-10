@@ -5,7 +5,6 @@
   "packageManager": "pnpm@10.0.0",
   "main": "dist/server.js",
   "scripts": {
-    "build": "echo 'Building...' && mkdir -p dist && cp -r src/* dist/ || true",
     "start": "node dist/server.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/server.ts",
     "lint": "eslint src --ext .ts",
@@ -15,7 +14,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts"
+    "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
+    "start:prod": "npx prisma generate && node dist/server.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
